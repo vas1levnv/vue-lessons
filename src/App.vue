@@ -6,14 +6,14 @@
       :allowTouchMove="false"
       :navigation="true"
       class="words-swiper">
-    <swiper-slide v-for="(item, index) in words"  :key="index">
+    <swiper-slide v-for="item in words" :key="item.id"> <!-- index не стабильная штука, если у тебя объект с айдишником используй его -->
       <div class="words-swiper__item">
         <h2>{{item.word}}</h2>
         <div class="buttons">
-          <button @click="slideToIndex(index)">
+          <button @click="slideToIndex()">
             знаю
           </button>
-          <button @click="addSlide(item.word, item.id,)">
+          <button @click="addSlide(item)"> <!-- мог просто item передать  -->
             не знаю
           </button>
         </div>
@@ -52,24 +52,20 @@ const words = ref([
 
 const swiperRef = ref(null);
 const clikedIndex = ref(null);
-const selectedSlide =ref(null);
 
 
 const onSwiperInstance = (v) => {
   swiperRef.value = v;
 };
 
-const slideToIndex = (index) => {
-  let nextSlide = Number(index  + 1)
-  swiperRef.value.slideTo(nextSlide);
+const slideToIndex = () => {
+  swiperRef.value.slideNext(); // здесь просто метод следующего слайда вызвать он есть в доке
 }
 
-const addSlide = (word, id,index) => {
+const addSlide = (slide) => { //зачем писать индекс?
   clikedIndex.value = swiperRef.value.clickedIndex;
   let newSlides = words.value.filter(item => words.value.indexOf(item) !== clikedIndex.value);
-  selectedSlide.value = {word: word, id: id};
-  newSlides.push(selectedSlide.value)
-  words.value = newSlides
+  words.value = [...newSlides, {...slide}] //так быдет выглядеть как будто ты шаришь, а так ты дофига кода лишнего пишешь
 };
 
 </script>
